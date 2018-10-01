@@ -52,9 +52,13 @@ func (f *FirebasePusher) PushDevices(devices CloudDevices, message CloudMessage)
 		return pushResult, err
 	}
 
+	if !status.Ok {
+		return pushResult, fmt.Errorf("FCM Failed with status code: %d", status.StatusCode)
+	}
+
 	for i, ps := range status.Results {
 		for k, v := range ps {
-			if k == "message" {
+			if k == "message_id" {
 				pushResult[i].Message = v
 			} else {
 				if k == "error" {
