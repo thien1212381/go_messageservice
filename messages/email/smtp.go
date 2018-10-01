@@ -14,7 +14,7 @@ type SMTPSenderConfig struct {
 	Port   string `json:"port"`
 }
 
-const DefaultEmailTemplate = `From: {{.FromAddress}}
+const DefaultEmailTemplate = `From: {{.From}}
 To: {{.To}}
 Subject: {{.Subject}}
 
@@ -27,7 +27,8 @@ Sincerely,
 
 type SMTPData struct {
 	EmailMessage
-	To string
+	To   string
+	From string
 }
 
 type SMTPSender struct {
@@ -49,10 +50,6 @@ func NewSmtpSender(config *SMTPSenderConfig) *SMTPSender {
 func (s *SMTPSender) SendEmail(message EmailMessage) error {
 	var msg bytes.Buffer
 
-	if message.FromAddress == "" {
-		message.FromAddress = s.config.Sender
-	}
-
 	if message.FromName == "" {
 		message.FromName = s.config.Sender
 	}
@@ -60,6 +57,7 @@ func (s *SMTPSender) SendEmail(message EmailMessage) error {
 	data := &SMTPData{
 		EmailMessage: message,
 		To:           strings.Join(message.Destinations, ", "),
+		From:         s.config.Sender,
 	}
 
 	err := s.textTemplate.Execute(&msg, data)
