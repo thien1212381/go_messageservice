@@ -53,8 +53,14 @@ func (f *FirebasePusher) PushDevices(devices CloudDevices, message CloudMessage)
 	}
 
 	for i, ps := range status.Results {
-		for _, v := range ps {
-			pushResult[i].Message = v
+		for k, v := range ps {
+			if k == "message" {
+				pushResult[i].Message = v
+			} else {
+				if k == "error" {
+					pushResult[i].Error = v
+				}
+			}
 		}
 	}
 

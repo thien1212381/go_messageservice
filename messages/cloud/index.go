@@ -23,6 +23,7 @@ type CloudMessage struct {
 type PushResult struct {
 	CloudDevice
 	Message string
+	Error   string
 }
 
 type ICloudMessage interface {
